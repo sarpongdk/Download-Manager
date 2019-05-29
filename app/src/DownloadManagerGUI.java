@@ -51,7 +51,10 @@ public class DownloadManagerGUI extends JFrame
          public void actionPerformed(ActionEvent e)
          {
             String urlString = textField.getText();
-            
+            if (urlString.equals("") || urlString == null)
+            {
+               return;
+            }
 
             try
             {
