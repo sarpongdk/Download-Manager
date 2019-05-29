@@ -19,6 +19,7 @@ public class DownloadTable extends JTable
       this.renderer = new ProgressRenderer(MIN, MAX);
       setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       setDefaultRenderer(JProgressBar.class, this.renderer);
+      setRowHeight((int) this.renderer.getPreferredSize().getHeight());
    }
 
    public static class ProgressRenderer extends JProgressBar implements TableCellRenderer
@@ -49,7 +50,7 @@ boolean hasFocus, int row, int column)
       });
 
       DownloadTableModel model = new DownloadTableModel();
-      model.addDownload(new Download("https://doc.lagout.org/programmation/Java/Data%20Structures%20and%20Algorithms%20in%20Java%20%286th%20ed.%29%20%5BGoodrich%2C%20Tamassia%20%26%20Goldwasser%202014-01-28%5D.pdf"));
+      model.addDownload(new Download("https://doc.lagout.org/programmation/Java/Data%20Structures%20and%20Algorithms%20in%20Java%20%286th%20ed.%29%20%5BGoodrich%2C%20Tamassia%20%26%20Goldwasser%202014-01-28%5D.pdf", "demo.pdf"));
       frame.add((JTable) new DownloadTable(model));
       frame.pack();
       frame.setVisible(true);

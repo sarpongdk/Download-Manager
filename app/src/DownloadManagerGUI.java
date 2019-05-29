@@ -41,7 +41,6 @@ public class DownloadManagerGUI extends JFrame
 
       tableModel = new DownloadTableModel();
       table = new DownloadTable(tableModel);
-      table.setRowHeight((int) renderer.getPreferredSize().getHeight());
    }
 
    private void initListeners()
@@ -57,7 +56,8 @@ public class DownloadManagerGUI extends JFrame
             try
             {
                URL url = new URL(urlString);
-               tableModel.addDownload(new Download(url));
+               String urlPath = url.getPath();
+               tableModel.addDownload(new Download(url, urlPath));
                addDownload.setText("");
             }
             catch (Exception ex)

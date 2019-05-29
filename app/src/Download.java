@@ -12,8 +12,9 @@ public class Download implements Runnable
    private byte[] buffer;
    private HttpURLConnection http;
    private URL url;
+   private String filename;
 
-   public Download(URL url)
+   public Download(URL url, String filename)
    {
       try
       {
@@ -26,6 +27,7 @@ public class Download implements Runnable
          System.exit(1);
       }
       
+      this.filename = filename;
       this.size = this.http.getContentLength();
       this.downloaded = 0;
       this.buffer = new byte[BUFFER_SIZE];
@@ -34,7 +36,7 @@ public class Download implements Runnable
       thread.start();
    }
 
-   public Download(String url)
+   public Download(String url, String filename)
    {
       try
       {
@@ -47,6 +49,7 @@ public class Download implements Runnable
          System.exit(1);
       }
       
+      this.filename = filename;
       this.size = this.http.getContentLength();
       this.downloaded = 0;
       this.buffer = new byte[BUFFER_SIZE];
@@ -60,7 +63,7 @@ public class Download implements Runnable
    {
       try
       {
-         download();
+         download(this.filename);
       }
       catch (Exception e)
       {
@@ -75,10 +78,10 @@ public class Download implements Runnable
       return size;
    }
 
-   private void download() throws IOException
+   private void download(String filename) throws IOException
    {
       BufferedInputStream is = new BufferedInputStream(http.getInputStream());
-      FileOutputStream fs = new FileOutputStream("demo.pdf");
+      FileOutputStream fs = new FileOutputStream(filename);
 
       int bytesRead;
       while ((bytesRead = is.read(buffer, 0, BUFFER_SIZE)) != -1)
@@ -105,7 +108,7 @@ public class Download implements Runnable
 
    public static void main(String[] args)
    {
-      Download download = new Download("https://doc.lagout.org/programmation/Java/Data%20Structures%20and%20Algorithms%20in%20Java%20%286th%20ed.%29%20%5BGoodrich%2C%20Tamassia%20%26%20Goldwasser%202014-01-28%5D.pdf");
+      Download download = new Download("https://doc.lagout.org/programmation/Java/Data%20Structures%20and%20Algorithms%20in%20Java%20%286th%20ed.%29%20%5BGoodrich%2C%20Tamassia%20%26%20Goldwasser%202014-01-28%5D.pdf", "demo.pdf");
       
       JProgressBar bar = new JProgressBar(0, 100);
       bar.setStringPainted(true);
