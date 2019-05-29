@@ -13,6 +13,27 @@ public class Download implements Runnable
    private HttpURLConnection http;
    private URL url;
 
+   public Download(URL url)
+   {
+      try
+      {
+         this.url = url;
+         this.http = (HttpURLConnection) this.url.openConnection();
+      }
+      catch (Exception e)
+      {
+         System.err.println("Error");
+         System.exit(1);
+      }
+      
+      this.size = this.http.getContentLength();
+      this.downloaded = 0;
+      this.buffer = new byte[BUFFER_SIZE];
+
+      Thread thread = new Thread(this);
+      thread.start();
+   }
+
    public Download(String url)
    {
       try
@@ -44,11 +65,12 @@ public class Download implements Runnable
       catch (Exception e)
       {
          System.err.println("Error");
-         System.exit(1);
+         
+         return;
       }
    }
 
-   public int getFileSize()
+   public int getDownloadSize()
    {
       return size;
    }
@@ -70,10 +92,15 @@ public class Download implements Runnable
       http.disconnect();
    }
 
-   public int getDownloadPercent()
+   public int getDownloadProgress()
    {
       System.out.println(downloaded);
       return ((downloaded * 100)/size);
+   }
+
+   public String getURL()
+   {
+      return url.toString();
    }
 
    public static void main(String[] args)
@@ -92,7 +119,7 @@ public class Download implements Runnable
       int percent = 0;
       while (percent < 100)
       {
-         percent = download.getDownloadPercent();
+         percent = download.getDownloadProgress();
          bar.setValue(percent);
       }
    }
