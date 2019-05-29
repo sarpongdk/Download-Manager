@@ -3,7 +3,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.*;
 
-public class Download extends Thread
+public class Download implements Runnable
 {
    private static final int BUFFER_SIZE = 1024;
 
@@ -13,12 +13,9 @@ public class Download extends Thread
    private HttpURLConnection http;
    private URL url;
    private String filename;
-   private File file;
 
    public Download(URL url, String filename)
    {
-      super();
-
       try
       {
          this.url = url;
@@ -26,7 +23,7 @@ public class Download extends Thread
       }
       catch (Exception e)
       {
-         System.err.println("Error");
+         System.err.println("Warn: Illegal URL");
          System.exit(1);
       }
       
@@ -35,13 +32,12 @@ public class Download extends Thread
       this.downloaded = 0;
       this.buffer = new byte[BUFFER_SIZE];
 
-      start();
+      Thread thread = new Thread(this);
+      thread.start();
    }
 
    public Download(String url, String filename)
    {
-      super();
-
       try
       {
          this.url = new URL(url);
@@ -49,7 +45,7 @@ public class Download extends Thread
       }
       catch (Exception e)
       {
-         System.err.println("Error");
+         System.err.println("Warn: Illegal URL");
          System.exit(1);
       }
       
@@ -58,7 +54,8 @@ public class Download extends Thread
       this.downloaded = 0;
       this.buffer = new byte[BUFFER_SIZE];
 
-      start();
+      Thread thread = new Thread(this);
+      thread.start();
    }
 
    @Override
@@ -70,7 +67,7 @@ public class Download extends Thread
       }
       catch (Exception e)
       {
-         System.err.println("Error");
+         System.err.println("Donwload Error");
          
          return;
       }
@@ -93,33 +90,28 @@ public class Download extends Thread
 
    public void cancelDownload()
    {
-      file.delete();
-      interrupt();
+
    }
 
    private void download(String filename) throws IOException
    {
       BufferedInputStream is = new BufferedInputStream(http.getInputStream());
-      file = new File(filename);
-      file.createNewFile();
-      RandomAccessFile raf = new RandomAccessFile(file, "w");
+      FileOutputStream fs = new FileOutputStream(filename);
 
       int bytesRead;
       while ((bytesRead = is.read(buffer, 0, BUFFER_SIZE)) != -1)
       {
-         raf.seek(downloaded);
-         raf.write(buffer, 0, bytesRead);
+         fs.write(buffer);
          downloaded += bytesRead;
       }
 
       is.close();
-      raf.close();
+      fs.close();
       http.disconnect();
    }
 
    public int getDownloadProgress()
    {
-      System.out.println(downloaded);
       return ((downloaded * 100)/size);
    }
 
